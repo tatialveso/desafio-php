@@ -1,6 +1,7 @@
 <?php
 
     include('./includes/validacoes.php');
+    include('./includes/header.php');
 
     $nomeCorreto = true;
     $precoCorreto = true;
@@ -17,14 +18,15 @@
 
         $fotoCorreta = checarFoto($_FILES['foto']['name']);
 
+        $foto = $_FILES['foto']['name'];
+
         if ($_FILES['foto']['error'] == 0) {
-            $foto = $_FILES['foto']['name'];
             $caminhoTmp = $_FILES['foto']['tmp_name'];
 
-            move_uploaded_file($caminhoTmp, './img/' . $foto);
+            move_uploaded_file($caminhoTmp, './img/uploads/' . $foto);
         }
 
-        $produtosJson = file_get_contents('./produtos.json');
+        $produtosJson = file_get_contents('./basedados/produtos.json');
 
         $arrayProdutos = json_decode($produtosJson, true);
 
@@ -39,7 +41,7 @@
 
         $novoProdutosJson = json_encode($arrayProdutos);
 
-        file_put_contents('./produtos.json', $novoProdutosJson);
+        file_put_contents('./basedados/produtos.json', $novoProdutosJson);
 
     }
 ?>
@@ -50,11 +52,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Criar um produto</title>
+    <title>Desafio PHP: Inserir Produto</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
     <div class="container">
+        <h5 class="mb-4 text-center">Inserir um produto</h5>
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="nome">Nome do produto</label>
@@ -89,7 +92,7 @@
                     </div>
                 <?php endif ?>
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Submeter</button>
+            <button type="submit" class="btn btn-primary mt-4 mb-4">Submeter</button>
         </form>
     </div>
 </body>

@@ -1,7 +1,5 @@
 <?php
     function checarNome($str) {
-
-        // verificando se a string tem um mínimo de caracteres
         if (strlen($str) < 3) {
             return false;
         }
@@ -24,4 +22,3 @@
             return true;
         }
     }
-    

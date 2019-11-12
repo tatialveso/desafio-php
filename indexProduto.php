@@ -1,4 +1,7 @@
-<?php include('./createProduto.php') ?>
+<?php include('./includes/validacoes.php');
+
+    $produtos = pegarProdutos();
+?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
