@@ -23,8 +23,18 @@
         }
     }
 
-    function pegarProdutos() {
-        $produtosJson = file_get_contents('basedados/produtos.json');
+    function checarEmail($str) {
+        if (!$str) {
+            return false;
+        } else {
+            return true;
+        } 
+    }
 
-        $arrayProdutos = json_decode($produtosJson, true);
+    function checarSenha($str) {
+        if (strlen($str) < 6) {
+            return false;
+        } else {
+            return true;
+        }
     }
