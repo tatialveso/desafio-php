@@ -22,3 +22,9 @@
             return true;
         }
     }
+
+    function pegarProdutos() {
+        $produtosJson = file_get_contents('basedados/produtos.json');
+
+        $arrayProdutos = json_decode($produtosJson, true);
+    }
