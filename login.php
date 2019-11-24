@@ -2,7 +2,7 @@
     include 'includes/header.php';
 
     // if ($salvou) {
-    //     header(location:)
+    //     header(location:indexProduto.php);
     // }
 ?>
 
