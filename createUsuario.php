@@ -1,8 +1,9 @@
 <?php
-    include('./includes/validacoes.php');
-    include('./includes/header.php');
+    session_start();
 
-    include('./includes/dbc.php');
+    include 'includes/validacoes.php';
+    include 'includes/header.php';
+    include 'includes/dbc.php';
 
     $query = $dbc->prepare("SELECT
                                 id,
@@ -14,21 +15,38 @@
     $nomeCorreto = true;
     $emailCorreto = true;
     $senhaCorreta = true;
+    $senhaConfirmadaCorreta = true;
 
     if ($_POST) {
-        
-        $nomeCorreto = checarNome($_POST['nome']);
-
         $nome = $_POST['nome'];
+        $email = $_POST['email'];
+        $senha = $_POST['senha'];
+        $senhaConfirmada = $_POST['senhaConfirmada'];
+
+        $nomeCorreto = checarNome($_POST['nome']);
 
         $emailCorreto = checarEmail($_POST['email']);
 
-        $email = $_POST['email'];
-
         $senhaCorreta = checarSenha($_POST['senha']);
 
-        $senha = $_POST['senha'];
+        if ($senha != $senhaConfirmada) {
+            $senhaConfirmadaCorreta = false;
+        }
 
+        $query = $dbc->prepare("INSERT INTO
+                                    usuarios (
+                                        nome,
+                                        email,
+                                        senha)
+                                VALUES (
+                                    :nome,
+                                    :email,
+                                    :senha);");
+        $query->execute([':nome' => $nome,
+                        ':email' => $email,
+                        ':senha' => password_hash($_POST['senha'], PASSWORD_DEFAULT)]);
+        
+    
     }
 ?>
 
@@ -99,11 +117,14 @@
                         </div>
                         <div class="form-group">
                             <label for="senha">Confirme a senha</label>
-                            <input name="senhaConfirmada" type="password" class="form-control" placeholder="Insira a senha novamente">
+                            <input name="senhaConfirmada" type="password" class="form-control <?php if(!$senhaConfirmadaCorreta) { echo ('is-invalid');} ?>" placeholder="Insira a senha novamente">
+                            <?php if (!$senhaConfirmadaCorreta) : ?>
+                                <div class="invalid-feedback">
+                                    As senhas não coincidem.
+                                </div>
+                            <?php endif ?>
                         </div>
-                        <a href="">
-                            <button type="submit" class="btn btn-dark col-12 mt-3">Cadastrar</button>
-                        </a>
+                        <button type="submit" class="btn btn-dark col-12 mt-3">Cadastrar</button>
                     </form>
                 </main>
             </div>

@@ -1,4 +1,5 @@
 <?php 
+    session_start();
     
     include './includes/header.php';
     include './includes/dbc.php';
@@ -49,6 +50,7 @@
 </head>
 <body>
     <div class="container d-flex flex-column justify-content-center align-items-center">
+        <h5 class="mb-4 text-center mt-4">Editar usuário</h5>
         <form class="col-6" method="POST">
             <div class="form-group">
                 <label for="nome">Nome completo</label>
@@ -69,7 +71,7 @@
 
                 <input type="hidden" name="id" value="<?= $id ?>">
 
-                <input type="submit" class="btn btn-dark mt-4 mb-4" value="Atualizar cadastro">
+                <button type="submit" class="btn btn-dark col-12 mt-3">Atualizar cadastro</button>
         </form>
     </div>
 </body>
