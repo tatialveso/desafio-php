@@ -37,7 +37,7 @@
                         <td><?= $produto['nome'] ?></td>
                         <td><?= $produto['descricao'] ?></td>
                         <td><?= $produto['preco'] ?></td>
-                        <td><a href="showProduto.php?<?= $produto['id'] ?>" class="btn btn-primary">Ver produto</a></td>
+                        <td><a href="showProduto.php?id=<?= $produto['id'] ?>" class="btn btn-primary">Ver produto</a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

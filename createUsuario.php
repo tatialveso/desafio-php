@@ -4,8 +4,10 @@
 
     include('./includes/dbc.php');
 
-    $query = $dbc->prepare("SELECT nome
-                                FROM usuarios;");
+    $query = $dbc->prepare("SELECT
+                                id,
+                                nome
+                            FROM usuarios;");
     $query->execute();
     $usuarios = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -42,29 +44,29 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-4">
+            <div class="col-6">
                 <h5 class="mb-4 text-center mt-4">Usuários cadastrados</h5>
                         <table class="table">
                             <thead>
                                 <tr class="text-center">
-                                    <th>NOME</th>
+                                    <th>NOME DO USUÁRIO</th>
                                     <th>AÇÕES</th>
                                 </tr>
                             </thead>
                             <tbody>
                             <?php foreach ($usuarios as $usuario) : ?>
                                 <tr>
-                                    <td><?= $usuario['nome'] ?></td>
+                                    <td class="text-center"><?= $usuario['nome'] ?></td>
                                     <td class="text-center">
-                                        <a class="col-6" href="editUsuario.php?<?=$usuario['id']?>" class="btn btn-dark">Editar</a>
-                                        <a class="col-6" href="#" class="btn btn-dark">Excluir</a></td>
+                                        <a href="editUsuario.php?id=<?=$usuario['id']?>"><button class="btn btn-dark">Editar</button></a>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
                         </table>
             </div>
 
-            <div class="col-8">
+            <div class="col-6">
                 <main class="d-flex flex-column justify-content-center align-items-center">
                     <h5 class="mb-4 text-center mt-4">Cadastro do usuário</h5>
                     <form method="POST">

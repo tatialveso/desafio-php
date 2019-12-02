@@ -1,48 +1,49 @@
 <?php
 
-    include('./includes/validacoes.php');
-    include('./includes/header.php');
+    include './includes/dbc.php';
+
+    include './includes/validacoes.php';
+    include './includes/header.php';
 
     $nomeCorreto = true;
     $precoCorreto = true;
     $fotoCorreta = true;
 
-    if ($_POST) {
-        $nomeCorreto = checarNome($_POST['nome']);
+    if($_POST) {
 
         $nome = $_POST['nome'];
-
-        $precoCorreto = checarPreco($_POST['preco']);
-
+        $descricao = $_POST['descricao'];
         $preco = $_POST['preco'];
+        // $foto = $_FILES['foto']['name'];
 
-        $fotoCorreta = checarFoto($_FILES['foto']['name']);
+        $query = $dbc->prepare("INSERT INTO
+                                produtos (nome,
+                                    descricao,
+                                    preco,
+                                    foto)
+                                VALUES
+                                    :nome,
+                                    :descricao,
+                                    :preco,
+                                    :foto;");
+    
+        $query->execute([':nome' => $nome,
+                        ':descricao' => $descricao,
+                        ':preco' => $preco,
+                        ':foto' => $foto]);
 
-        $foto = $_FILES['foto']['name'];
+        $nomeCorreto = checarNome($_POST['nome']);
+        $precoCorreto = checarPreco($_POST['preco']);
+        // $fotoCorreta = checarFoto($_POST['foto']['name']);
+                
+        // if ($_FILES['foto']['error'] == 0) {
+        //     $caminhoTmp = $_FILES['foto']['tmp_name'];
+        //     $foto = $_POST['foto']['name'];
+                
+        //     move_uploaded_file($caminhoTmp, './assets/img/uploads/' . $foto);
+        // }
 
-        if ($_FILES['foto']['error'] == 0) {
-            $caminhoTmp = $_FILES['foto']['tmp_name'];
-
-            move_uploaded_file($caminhoTmp, './img/uploads/' . $foto);
-        }
-
-        $produtosJson = file_get_contents('./basedados/produtos.json');
-
-        $arrayProdutos = json_decode($produtosJson, true);
-
-        $novoProduto = [
-            'nome' => $_POST['nome'],
-            'descricao' => $_POST['descricao'],
-            'preco' => $_POST['preco'],
-            'foto' => $foto
-        ];
-
-        $arrayProdutos[] = $novoProduto;
-
-        $novoProdutosJson = json_encode($arrayProdutos);
-
-        file_put_contents('./basedados/produtos.json', $novoProdutosJson);
-
+        header('Location:indexProduto.php');
     }
 ?>
 
@@ -59,6 +60,7 @@
     <div class="container">
         <h5 class="mb-4 text-center">Inserir um produto</h5>
         <form method="POST" enctype="multipart/form-data">
+            
             <div class="form-group">
                 <label for="nome">Nome do produto</label>
                 <input name="nome"
@@ -69,10 +71,12 @@
                     </div>
                 <?php endif ?>
             </div>
+
             <div class="form-group">
                 <label for="descricao">Descrição do produto</label>
                 <textarea name="descricao" class="form-control" rows="3" placeholder="Descreva o produto"></textarea>
             </div>
+
             <div class="form-group">
                 <label for="preco">Preço do produto</label>
                 <input name="preco" class="form-control <?php if(!$precoCorreto) { echo ('is-invalid');} ?>" type="number" step="0.01" min="0" placeholder="Insira o preço">
@@ -82,9 +86,10 @@
                     </div>
                 <?php endif ?>
             </div>
+
             <label>Foto do produto</label>
             <div class="custom-file">
-                <input name="foto" type="file" class="custom-file-input <?php if(!$fotoCorreta) { echo ('is-invalid');} ?>" aria-describedby="inputGroupFileAddon01">
+                <input name="foto" type="file" class="custom-file-input <?php if(!$fotoCorreta) { echo ('is-invalid');} ?>">
                 <label class="custom-file-label" for="foto">Selecione a imagem</label>
                 <?php if (!$fotoCorreta) : ?>
                     <div class="invalid-feedback">
@@ -92,7 +97,8 @@
                     </div>
                 <?php endif ?>
             </div>
-            <button type="submit" class="btn btn-primary mt-4 mb-4">Submeter</button>
+
+            <input type="submit" class="btn btn-dark mt-4 mb-4" value="Cadastrar produto">
         </form>
     </div>
 </body>
