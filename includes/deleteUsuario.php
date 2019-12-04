@@ -9,5 +9,5 @@
 
     $query->execute([':id' => $id]);
 
-    header('location: ../login.php');
+    header('location: ../createUsuario.php');
 ?>

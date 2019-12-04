@@ -1,8 +1,8 @@
 <?php
     session_start();
 
-    include 'includes/header.php';
-    include 'includes/dbc.php';
+    include './includes/header.php';
+    include './includes/dbc.php';
 
     $emailLoginCerto = true;
     $senhaLoginCerta = true;
@@ -50,17 +50,11 @@
         <form method="POST">
             <div class="form-group">
                 <label for="email">Endereço de e-mail</label>
-                <input style="width:500px;" name="emailLogin" type="email" class="form-control" placeholder="Insira seu e-mail">
-                <?php if (isset($_COOKIE['emailUsuario'])) {
-                    echo "value='$_COOKIE[emailUsuario]'";
-                } ?>
+                <input style="width:500px;" name="emailLogin" type="email" class="form-control" placeholder="Insira seu e-mail" <?php if (isset($_COOKIE['emailUsuario'])) { echo "value='$_COOKIE[emailUsuario]'"; } ?>>
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
-                <input name="senhaLogin" type="password" class="form-control" placeholder="Insira a senha">
-                <?php if (isset($_COOKIE['senhaUsuario'])) {
-                    echo "value='$_COOKIE[senhaUsuario]'";
-                } ?>
+                <input name="senhaLogin" type="password" class="form-control" placeholder="Insira a senha" <?php if (isset($_COOKIE['senhaUsuario'])) { echo "value='$_COOKIE[senhaUsuario]'"; } ?>>
             </div>
             <div class="form-group">
                 <input type="checkbox" name="manter" id="manter">

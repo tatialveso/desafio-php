@@ -1,6 +1,7 @@
 <?php
 
-    include('./includes/dbc.php');
+    include './includes/dbc.php';
+    include './includes/header.php';
 
     $query = $dbc->prepare("SELECT *
                                 FROM produtos;");
@@ -20,6 +21,7 @@
 </head>
 <body>
     <main class="container">
+        <h5 class="mb-4 text-center mt-4">Produtos cadastrados</h5>
         <table class="table">
             <thead>
                 <tr>
@@ -37,7 +39,7 @@
                         <td><?= $produto['nome'] ?></td>
                         <td><?= $produto['descricao'] ?></td>
                         <td><?= $produto['preco'] ?></td>
-                        <td><a href="showProduto.php?id=<?= $produto['id'] ?>" class="btn btn-primary">Ver produto</a></td>
+                        <td><a href="showProduto.php?id=<?= $produto['id'] ?>" class="btn btn-dark">Ver produto</a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
