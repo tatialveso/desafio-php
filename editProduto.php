@@ -1,4 +1,6 @@
-<?php 
+<?php
+    session_start();
+
     include './includes/dbc.php';
     include './includes/header.php';
 

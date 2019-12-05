@@ -5,6 +5,18 @@
     include './includes/dbc.php';
     include './includes/validacoes.php';
 
+    $id = $_GET['id'];
+
+    $query = $dbc->prepare("SELECT
+                                id,
+                                nome,
+                                email,
+                                senha
+                            FROM usuarios
+                            WHERE id = :id;");
+    $query->execute([':id' => $id]);
+    $usuario = $query->fetchAll(PDO::FETCH_ASSOC)[0];
+
     $nomeCorreto = true;
     $emailCorreto = true;
     $senhaCorreta = true;
@@ -22,49 +34,31 @@
         $usuario['senha'] = $_POST['senha'];
 
         $nomeCorreto = checarNome($_POST['nome']);
-
         $emailCorreto = checarEmail($_POST['email']);
-
         $senhaCorreta = checarSenha($_POST['senha']);
         
         if ($senha != $senhaConfirmada) {
             $senhaConfirmadaCorreta = false;
         }
 
-        if ($nomeCorreto && $emailCorreto && $senhaCorreta && !$senhaConfirmadaCorreta) {
-            $query = $dbc->prepare("UPDATE
+        $query = $dbc->prepare("UPDATE
                                     usuarios
                                 SET
                                     nome = :nome,
                                     email = :email,
                                     senha = :senha
                                 WHERE id = :id;");
-            $funcionou = $query->execute([':id' => $id,
-                        ':nome' => $nome,
-                        ':email' => $email,
-                        ':senha' => $senha]);
+        $funcionou = $query->execute([':id' => $id,
+                    ':nome' => $nome,
+                    ':email' => $email,
+                    ':senha' => $senha]);
 
-            if ($funcionou) {
-                header('Location: createUsuario.php');
-            } else {
-                print_r($query->errorInfo());
-                die();
-            };
-                        
-        }
-
-    } else {
-        $id = $_GET['id'];
-
-        $query = $dbc->prepare("SELECT
-                                    id,
-                                    nome,
-                                    email,
-                                    senha
-                                FROM usuarios
-                                WHERE id = :id;");
-        $query->execute([':id' => $id]);
-        $usuario = $query->fetchAll(PDO::FETCH_ASSOC)[0];
+        if ($funcionou) {
+            header('Location: createUsuario.php');
+        } else {
+            print_r($query->errorInfo());
+            die();
+        }             
     }
 ?>
 
@@ -118,13 +112,14 @@
                 <?php endif ?>
             </div>
 
-                <input type="hidden" name="id" value="<?= $id ?>">
+            <input type="hidden" name="id" value="<?= $id ?>">
 
-                <button type="submit" class="btn btn-dark float-left">Atualizar cadastro</button>
-                <form action="./includes/deleteUsuario.php" method="POST">
-                    <input type="hidden" value="<?= $id ?>" name="id">
-                    <input class="btn btn-dark float-right" type="submit" value="Excluir cadastro">
-                </form>
+            <button type="submit" class="btn btn-dark col-12 mt-3">Atualizar cadastro</button>
+        </form>
+
+        <form method="POST" action="./includes/deleteUsuario.php">
+            <input type="hidden" value="<?= $id ?>" name="id">
+            <input class="btn btn-secondary mt-4" type="submit" value="Excluir cadastro">
         </form>
     </div>
 </body>

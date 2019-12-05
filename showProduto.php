@@ -1,4 +1,5 @@
 <?php
+    session_start();
 
     include './includes/header.php';
 
@@ -17,6 +18,10 @@
     $query->execute([':id' => $id]);
 
     $produtos = $query->fetchAll(PDO::FETCH_ASSOC);
+    // echo ('<pre>');
+    // print_r($produtos);
+    // echo ('</pre>');
+    // die();
 
 ?>
 
@@ -34,7 +39,7 @@
         <div class="row">
             <div class="col-6 mt-5">
                 <?php foreach ($produtos as $produto) : ?>
-                    <img src="./assets/img/uploads/<?= $produto['foto']?>.png" alt="...">
+                    <img style = "width: 450px;" src="./assets/img/uploads/<?= $produto['foto']?>" alt="...">
                 <?php endforeach; ?>
             </div>
             <div class="col-6 mt-5">
@@ -50,17 +55,13 @@
                             <div><?= $produto['preco']?></div>
                         </div>
                 <?php endforeach; ?>
-            </div>
-        </div>
-        <div class="row mt-5">
-            <div class="col-6">
-                <form method="POST" action="./includes/deleteProduto.php">
-                    <input type="hidden" value="<?= $id ?>" name="id">
-                    <input class="btn btn-dark" type="submit" value="Excluir produto">
-                </form>
-            </div>
-            <div class="col-6">
-                <a href="editProduto.php?id=<?= $id ?>"><button class="btn btn-dark">Editar produto</button></a>
+                <div class=" mt-4 d-flex justify-content-around">
+                    <form method="POST" action="./includes/deleteProduto.php">
+                        <input type="hidden" value="<?= $id ?>" name="id">
+                        <input class="btn btn-dark" type="submit" value="Excluir produto">
+                    </form>
+                    <a href="editProduto.php?id=<?= $id ?>"><button class="btn btn-dark">Editar produto</button></a>
+                </div>
             </div>
         </div>
     </main>

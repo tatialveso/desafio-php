@@ -7,46 +7,48 @@
 
     $nomeCorreto = true;
     $precoCorreto = true;
-    // $fotoCorreta = true;
+    $fotoCorreta = true;
 
     if($_POST) {
-
         $nome = $_POST['nome'];
         $descricao = $_POST['descricao'];
         $preco = $_POST['preco'];
-        // $foto = $_FILES['foto']['name'];
+        $foto = $_FILES['foto']['name'];
 
         $nomeCorreto = checarNome($_POST['nome']);
         $precoCorreto = checarPreco($_POST['preco']);
-        // $fotoCorreta = checarFoto($_POST['foto']['name']);
+        $fotoCorreta = checarFoto($_FILES['foto']['name']);
                 
-        // if ($_FILES['foto']['error'] == 0) {
-        //     $caminhoTmp = $_FILES['foto']['tmp_name'];
-        //     $foto = $_POST['foto']['name'];
+        if ($_FILES['foto']['error'] == 0) {
+            $caminhoTmp = $_FILES['foto']['tmp_name'];
+            $foto = $_FILES['foto']['name'];
                 
-        //     move_uploaded_file($caminhoTmp, './assets/img/uploads/' . $foto);
-        // }
+            move_uploaded_file($caminhoTmp, './assets/img/uploads/' . $foto);
+        }
 
         $query = $dbc->prepare("INSERT INTO
                                     produtos (
                                         nome,
                                         descricao,
-                                        preco)
+                                        preco,
+                                        foto)
                                 VALUES
-                                    :nome,
+                                    (:nome,
                                     :descricao,
-                                    :preco;");
+                                    :preco,
+                                    :foto);");
     
         $funcionou = $query->execute([':nome' => $nome,
                         ':descricao' => $descricao,
-                        ':preco' => $preco]);
+                        ':preco' => $preco,
+                        ':foto' => $foto]);
 
         if ($funcionou) {
             header('Location: indexProduto.php');
         } else {
             print_r($query->errorInfo());
             die();
-        };
+        }
     }
 ?>
 
@@ -61,7 +63,7 @@
 </head>
 <body>
     <div class="container">
-        <h5 class="mb-4 text-center">Inserir um produto</h5>
+        <h5 class="mb-4 text-center mt-4">Inserir um produto</h5>
         <form method="POST" enctype="multipart/form-data">
             
             <div class="form-group">
@@ -90,7 +92,7 @@
                 <?php endif ?>
             </div>
 
-            <!-- <label>Foto do produto</label>
+            <label>Foto do produto</label>
             <div class="custom-file">
                 <input name="foto" type="file" class="custom-file-input <?php if(!$fotoCorreta) { echo ('is-invalid');} ?>">
                 <label class="custom-file-label" for="foto">Selecione a imagem</label>
@@ -99,7 +101,7 @@
                         A foto é obrigatória.
                     </div>
                 <?php endif ?>
-            </div> -->
+            </div>
 
             <button type="submit" class="btn btn-dark mt-4 mb-4">Cadastrar produto</button>
         </form>

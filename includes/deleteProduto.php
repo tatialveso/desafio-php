@@ -9,5 +9,5 @@
 
     $query->execute([':id' => $id]);
 
-    header('location: ../indexProduto.php');
+    header('Location: ../indexProduto.php');
 ?>

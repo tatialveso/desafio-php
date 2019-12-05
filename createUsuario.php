@@ -42,11 +42,16 @@
                                     :nome,
                                     :email,
                                     :senha);");
-        $query->execute([':nome' => $nome,
+        $funcionou = $query->execute([':nome' => $nome,
                         ':email' => $email,
                         ':senha' => password_hash($_POST['senha'], PASSWORD_DEFAULT)]);
         
-    
+        if ($funcionou) {
+            header('Location: createUsuario.php');
+        } else {
+            print_r($query->errorInfo());
+            die();
+        }
     }
 ?>
 
