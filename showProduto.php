@@ -39,7 +39,7 @@
         <div class="row">
             <div class="col-6 mt-5">
                 <?php foreach ($produtos as $produto) : ?>
-                    <img style = "width: 450px;" src="./assets/img/uploads/<?= $produto['foto']?>" alt="...">
+                    <img style = "width: 450px;" src="./img/uploads/<?= $produto['foto']?>" alt="...">
                 <?php endforeach; ?>
             </div>
             <div class="col-6 mt-5">

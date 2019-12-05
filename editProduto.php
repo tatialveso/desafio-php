@@ -3,6 +3,7 @@
 
     include './includes/dbc.php';
     include './includes/header.php';
+    include './includes/validacoes.php';
 
     $id = $_GET['id'];
 
@@ -18,28 +19,44 @@
     $query->execute([':id' => $id]);
     $produtos = $query->fetchAll(PDO::FETCH_ASSOC)[0];
 
+    $nomeCorreto = true;
+    $precoCorreto = true;
+    $fotoCorreta = true;
+
     if ($_POST) {
         $nome = $_POST['nome'];
         $descricao = $_POST['descricao'];
         $preco = $_POST['preco'];
         $foto = $_FILES['foto']['name'];
 
-        $queryEditar = $dbc->prepare("UPDATE
-                                        produtos
-                                    SET
-                                        nome = :nome,
-                                        descricao = :descricao,
-                                        preco = :preco,
-                                        foto = :foto
-                                    WHERE id = :id;");
-    
-        $queryEditar->execute([':id' => $id,
-                    ':nome' => $nome,
-                    ':descricao' => $descricao,
-                    ':preco' => $preco,
-                    ':foto' => $foto]);
+        $nomeCorreto = checarNome($_POST['nome']);
+        $precoCorreto = checarPreco($_POST['preco']);
+        $fotoCorreta = checarFoto($_FILES['foto']['name']);
 
-        header('Location:indexProduto.php');
+        if ($_FILES['foto']['error'] == 0) {
+            $caminhoTmp = $_FILES['foto']['tmp_name'];
+            $foto = $_FILES['foto']['name'];
+                
+            move_uploaded_file($caminhoTmp, './img/uploads/' . $foto);
+        }
+
+        if ($nomeCorreto && $precoCorreto && $fotoCorreta) {
+            $query = $dbc->prepare("UPDATE
+                                            produtos
+                                        SET
+                                            nome = :nome,
+                                            descricao = :descricao,
+                                            preco = :preco,
+                                            foto = :foto
+                                        WHERE id = :id;");
+            $query->execute([':id' => $id,
+                        ':nome' => $nome,
+                        ':descricao' => $descricao,
+                        ':preco' => $preco,
+                        ':foto' => $foto]);
+            
+            header('Location:indexProduto.php');
+        }
     }
 ?>
 
@@ -54,12 +71,17 @@
 </head>
 <body>
     <div class="container">
-        <h5 class="mb-4 text-center">Inserir um produto</h5>
+        <h5 class="mb-4 text-center mt-4">Editar produto</h5>
         <form method="POST" enctype="multipart/form-data">
             
             <div class="form-group">
                 <label for="nome">Nome do produto</label>
-                <input name="nome" class="form-control" type="text" value="<?= $produtos['nome'] ?>">
+                <input name="nome" class="form-control <?php if(!$nomeCorreto) { echo ('is-invalid');} ?>" type="text" value="<?= $produtos['nome'] ?>">
+                <?php if (!$nomeCorreto) : ?>
+                    <div class="invalid-feedback">
+                        O nome precisa ter no mínimo três caracteres.
+                    </div>
+                <?php endif ?>
             </div>
 
             <div class="form-group">
@@ -69,13 +91,23 @@
 
             <div class="form-group">
                 <label for="preco">Preço do produto</label>
-                <input name="preco" class="form-control" type="number" step="0.01" min="0" value="<?=$produtos['preco']?>">
+                <input name="preco" class="form-control <?php if(!$precoCorreto) { echo ('is-invalid');} ?>" type="number" step="0.01" min="0" value="<?=$produtos['preco']?>">
+                <?php if (!$precoCorreto) : ?>
+                    <div class="invalid-feedback">
+                        O preço precisar ser um valor numérico.
+                    </div>
+                <?php endif ?>
             </div>
 
             <label>Foto do produto</label>
             <div class="custom-file">
-                <input name="foto" type="file" class="custom-file-input">
+                <input name="foto" type="file" class="custom-file-input <?php if(!$fotoCorreta) { echo ('is-invalid');} ?>">
                 <label class="custom-file-label" for="foto">Selecione a imagem</label>
+                <?php if (!$fotoCorreta) : ?>
+                    <div class="invalid-feedback">
+                        A foto é obrigatória.
+                    </div>
+                <?php endif ?>
             </div>
 
             <input type="hidden" name="id" value="<?= $id ?>">

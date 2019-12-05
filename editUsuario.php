@@ -41,24 +41,26 @@
             $senhaConfirmadaCorreta = false;
         }
 
-        $query = $dbc->prepare("UPDATE
-                                    usuarios
-                                SET
-                                    nome = :nome,
-                                    email = :email,
-                                    senha = :senha
-                                WHERE id = :id;");
-        $funcionou = $query->execute([':id' => $id,
-                    ':nome' => $nome,
-                    ':email' => $email,
-                    ':senha' => $senha]);
+        if ($nomeCorreto && $emailCorreto && $senhaCorreta && $senhaConfirmadaCorreta) {
+            $query = $dbc->prepare("UPDATE
+                                        usuarios
+                                    SET
+                                        nome = :nome,
+                                        email = :email,
+                                        senha = :senha
+                                    WHERE id = :id;");
+            $funcionou = $query->execute([':id' => $id,
+                        ':nome' => $nome,
+                        ':email' => $email,
+                        ':senha' => password_hash($_POST['senha'], PASSWORD_DEFAULT)]);
 
-        if ($funcionou) {
-            header('Location: createUsuario.php');
-        } else {
-            print_r($query->errorInfo());
-            die();
-        }             
+            if ($funcionou) {
+                header('Location: createUsuario.php');
+            } else {
+                print_r($query->errorInfo());
+                die();
+            }   
+        }          
     }
 ?>
 

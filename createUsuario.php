@@ -1,9 +1,9 @@
 <?php
     session_start();
 
-    include 'includes/validacoes.php';
-    include 'includes/header.php';
     include 'includes/dbc.php';
+    include 'includes/header.php';
+    include 'includes/validacoes.php';    
 
     $query = $dbc->prepare("SELECT
                                 id,
@@ -24,34 +24,35 @@
         $senhaConfirmada = $_POST['senhaConfirmada'];
 
         $nomeCorreto = checarNome($_POST['nome']);
-
         $emailCorreto = checarEmail($_POST['email']);
-
         $senhaCorreta = checarSenha($_POST['senha']);
 
         if ($senha != $senhaConfirmada) {
             $senhaConfirmadaCorreta = false;
         }
 
-        $query = $dbc->prepare("INSERT INTO
-                                    usuarios (
-                                        nome,
-                                        email,
-                                        senha)
-                                VALUES (
-                                    :nome,
-                                    :email,
-                                    :senha);");
-        $funcionou = $query->execute([':nome' => $nome,
-                        ':email' => $email,
-                        ':senha' => password_hash($_POST['senha'], PASSWORD_DEFAULT)]);
-        
-        if ($funcionou) {
-            header('Location: createUsuario.php');
-        } else {
-            print_r($query->errorInfo());
-            die();
+        if ($nomeCorreto && $emailCorreto && $senhaCorreta && $senhaConfirmadaCorreta) {
+            $query = $dbc->prepare("INSERT INTO
+                                        usuarios (
+                                            nome,
+                                            email,
+                                            senha)
+                                    VALUES (
+                                        :nome,
+                                        :email,
+                                        :senha);");
+            $funcionou = $query->execute([':nome' => $nome,
+                            ':email' => $email,
+                            ':senha' => password_hash($_POST['senha'], PASSWORD_DEFAULT)]);
+            
+            if ($funcionou) {
+                header('Location: createUsuario.php');
+            } else {
+                print_r($query->errorInfo());
+                die();
+            }
         }
+
     }
 ?>
 
@@ -69,24 +70,24 @@
         <div class="row">
             <div class="col-6">
                 <h5 class="mb-4 text-center mt-4">Usuários cadastrados</h5>
-                        <table class="table">
-                            <thead>
-                                <tr class="text-center">
-                                    <th>NOME DO USUÁRIO</th>
-                                    <th>AÇÕES</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($usuarios as $usuario) : ?>
-                                <tr>
-                                    <td class="text-center"><?= $usuario['nome'] ?></td>
-                                    <td class="text-center">
-                                        <a href="editUsuario.php?id=<?=$usuario['id']?>"><button class="btn btn-dark">Editar</button></a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                <table class="table">
+                    <thead>
+                        <tr class="text-center">
+                            <th>NOME DO USUÁRIO</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($usuarios as $usuario) : ?>
+                            <tr>
+                                <td class="text-center"><?= $usuario['nome'] ?></td>
+                                <td class="text-center">
+                                    <a href="editUsuario.php?id=<?=$usuario['id']?>"><button class="btn btn-dark">Editar</button></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
 
             <div class="col-6">
@@ -109,7 +110,7 @@
                                 <div class="invalid-feedback">
                                     O e-mail é obrigatório.
                                 </div>
-                            <?php endif ?>
+                            <?php endif; ?>
                         </div>
                         <div class="form-group">
                             <label for="senha">Senha</label>
@@ -118,7 +119,7 @@
                                 <div class="invalid-feedback">
                                     A senha precisa ter no mínimo seis caracteres e deve conter números e letras.
                                 </div>
-                            <?php endif ?>
+                            <?php endif; ?>
                         </div>
                         <div class="form-group">
                             <label for="senha">Confirme a senha</label>
@@ -127,7 +128,7 @@
                                 <div class="invalid-feedback">
                                     As senhas não coincidem.
                                 </div>
-                            <?php endif ?>
+                            <?php endif; ?>
                         </div>
                         <button type="submit" class="btn btn-dark col-12 mt-3">Cadastrar</button>
                     </form>
@@ -135,5 +136,9 @@
             </div>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>

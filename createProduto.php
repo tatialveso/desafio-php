@@ -23,31 +23,33 @@
             $caminhoTmp = $_FILES['foto']['tmp_name'];
             $foto = $_FILES['foto']['name'];
                 
-            move_uploaded_file($caminhoTmp, './assets/img/uploads/' . $foto);
+            move_uploaded_file($caminhoTmp, './img/uploads/' . $foto);
         }
 
-        $query = $dbc->prepare("INSERT INTO
-                                    produtos (
-                                        nome,
-                                        descricao,
-                                        preco,
-                                        foto)
-                                VALUES
-                                    (:nome,
-                                    :descricao,
-                                    :preco,
-                                    :foto);");
+        if ($nomeCorreto && $precoCorreto && $fotoCorreta) {
+            $query = $dbc->prepare("INSERT INTO
+                                        produtos (
+                                            nome,
+                                            descricao,
+                                            preco,
+                                            foto)
+                                    VALUES
+                                        (:nome,
+                                        :descricao,
+                                        :preco,
+                                        :foto);");
+        
+            $funcionou = $query->execute([':nome' => $nome,
+                            ':descricao' => $descricao,
+                            ':preco' => $preco,
+                            ':foto' => $foto]);
     
-        $funcionou = $query->execute([':nome' => $nome,
-                        ':descricao' => $descricao,
-                        ':preco' => $preco,
-                        ':foto' => $foto]);
-
-        if ($funcionou) {
-            header('Location: indexProduto.php');
-        } else {
-            print_r($query->errorInfo());
-            die();
+            if ($funcionou) {
+                header('Location: indexProduto.php');
+            } else {
+                print_r($query->errorInfo());
+                die();
+            }
         }
     }
 ?>
@@ -79,7 +81,7 @@
 
             <div class="form-group">
                 <label for="descricao">Descrição do produto</label>
-                <textarea name="descricao" class="form-control" rows="3" placeholder="Descreva o produto"></textarea>
+                <textarea name="descricao" class="form-control" placeholder="Descreva o produto"></textarea>
             </div>
 
             <div class="form-group">
