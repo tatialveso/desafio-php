@@ -1,5 +1,8 @@
 <?php 
     session_start();
+    if (!$_SESSION['acesso']) {
+        header('Location: login.php');
+    }
     
     include './includes/header.php';
     include './includes/dbc.php';
@@ -70,7 +73,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
@@ -84,7 +86,7 @@
                     <div class="invalid-feedback">
                         O nome precisa ter no mínimo três caracteres.
                     </div>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
             <div class="form-group">
                 <label for="email">Endereço de e-mail</label>
@@ -93,7 +95,7 @@
                     <div class="invalid-feedback">
                         O e-mail é obrigatório.
                     </div>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
@@ -102,7 +104,7 @@
                     <div class="invalid-feedback">
                         A senha precisa ter no mínimo seis caracteres e deve conter números e letras.
                     </div>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
             <div class="form-group">
                 <label for="senha">Confirme a senha</label>
@@ -111,7 +113,7 @@
                     <div class="invalid-feedback">
                         As senhas não coincidem.
                     </div>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
 
             <input type="hidden" name="id" value="<?= $id ?>">

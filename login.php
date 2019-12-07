@@ -23,7 +23,7 @@
                     setcookie('senhaUsuario', $_POST['senhaLogin']);
                 }
 
-                $_SESSION['acesso'] = $acesso;
+                $acesso = $_SESSION['acesso'];
 
                 return header('location: createUsuario.php');
             }

@@ -6,8 +6,8 @@
 
     $query = $dbc->prepare("DELETE FROM produtos
                             WHERE id = :id;");
-
     $query->execute([':id' => $id]);
 
     header('Location: ../indexProduto.php');
+
 ?>

@@ -1,5 +1,8 @@
 <?php
     session_start();
+    if (!$_SESSION['acesso']) {
+        header('Location: login.php');
+    }
 
     include './includes/dbc.php';
     include './includes/validacoes.php';
@@ -18,13 +21,6 @@
         $nomeCorreto = checarNome($_POST['nome']);
         $precoCorreto = checarPreco($_POST['preco']);
         $fotoCorreta = checarFoto($_FILES['foto']['name']);
-                
-        if ($_FILES['foto']['error'] == 0) {
-            $caminhoTmp = $_FILES['foto']['tmp_name'];
-            $foto = $_FILES['foto']['name'];
-                
-            move_uploaded_file($caminhoTmp, './img/uploads/' . $foto);
-        }
 
         if ($nomeCorreto && $precoCorreto && $fotoCorreta) {
             $query = $dbc->prepare("INSERT INTO
@@ -38,11 +34,11 @@
                                         :descricao,
                                         :preco,
                                         :foto);");
-        
             $funcionou = $query->execute([':nome' => $nome,
                             ':descricao' => $descricao,
                             ':preco' => $preco,
                             ':foto' => $foto]);
+            $idInserido = $dbc->lastInsertId();
     
             if ($funcionou) {
                 header('Location: indexProduto.php');
@@ -50,6 +46,13 @@
                 print_r($query->errorInfo());
                 die();
             }
+        }
+
+        if ($_FILES['foto']['error'] == 0) {
+            $caminhoTmp = $_FILES['foto']['tmp_name'];
+            $foto = $_FILES['foto']['name'];
+                
+            move_uploaded_file($caminhoTmp, './img/uploads/' . $idInserido . '.jpg');
         }
     }
 ?>
@@ -60,7 +63,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Desafio PHP: Inserir Produto</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
@@ -76,7 +78,7 @@
                     <div class="invalid-feedback">
                         O nome precisa ter no mínimo três caracteres.
                     </div>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">
@@ -91,7 +93,7 @@
                     <div class="invalid-feedback">
                         O preço precisar ser um valor numérico.
                     </div>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
 
             <label>Foto do produto</label>
@@ -102,7 +104,7 @@
                     <div class="invalid-feedback">
                         A foto é obrigatória.
                     </div>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
 
             <button type="submit" class="btn btn-dark mt-4 mb-4">Cadastrar produto</button>
